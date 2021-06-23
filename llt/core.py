@@ -6,11 +6,15 @@ import csv
 import click
 
 @click.command()
-def cli():
-    llt()
+@click.option('--category', '-c', default='none')
+@click.option('--project', '-p', default='general', show_default=True)
+@click.option('--task', '-t')
+@click.option('--labels', '-l')
+def cli(category, project, task, labels):
+    llt(category, project, task, labels)
     click.echo('LLT')
 
-def llt():
+def llt(category, project, task, labels):
     pass
 
 def read_tsv(filename):
