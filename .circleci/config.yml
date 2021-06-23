@@ -34,21 +34,21 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: deps-{{ requirements.lock }}
+          key: deps-{{ checksum "requirements.lock" }}
       - run:
           command: |
             pip install --user -r requirements.lock
       - save_cache:
           paths:
             - "~/.local"
-          key: deps-{{ requirements.lock }}
+          key: deps-{{ checksum "requirements.lock" }}
   test:
     docker:
       - image: cimg/python:3.8
     steps:
       - checkout
       - restore_cache:
-          key: deps-{{ requirements.lock }}
+          key: deps-{{ checksum "requirements.lock" }}
       - run:
           command: |
             python3 -m unittest -v
