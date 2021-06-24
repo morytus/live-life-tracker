@@ -1,21 +1,62 @@
+# -*- coding: utf-8 -*-
+
 import os
 import sys
 import time
 import datetime
 import csv
 import click
+from llt.task import Task
 
-@click.command()
-@click.option('--category', '-c', default='none')
-@click.option('--project', '-p', default='general', show_default=True)
-@click.option('--task', '-t')
-@click.option('--labels', '-l')
-def cli(category, project, task, labels):
-    llt(category, project, task, labels)
-    click.echo('LLT')
+class Core():
+    def __init__(self):
+        click.echo("create instance")
 
-def llt(category, project, task, labels):
-    pass
+    @click.group()
+    @click.option('--debug', is_flag=True)
+    @click.pass_context
+    def cmd(self, ctx, debug):
+        llt(debug)
+        task = Task()
+        #ctx.debug = debug
+        #ctx.task = task
+
+    def llt(self, debug):
+        pass
+
+    @cmd.command()
+    @click.argument('task')
+    @click.option('--category', '-c')
+    @click.option('--project', '-p', default='general', show_default=True)
+    @click.option('--labels', '-l')
+    def start(self, task, category, project, labels):
+        click.echo(f'Start task. You\'re great!\n CATEGORY: {category}\n  PROJECT: {project}\n     TASK: {task}\n   LABELS: {labels}')
+
+    @cmd.command()
+    def stop(self):
+        click.echo('stop!')
+
+    @cmd.command()
+    def restart(self):
+        click.echo('restart!')
+
+    @cmd.command()
+    def echo(self):
+        click.echo('echo!')
+
+    @cmd.command()
+    def delete(self):
+        category = 'woo'
+        project = 'yah'
+        task = 'tah'
+        labels = 'hoo'
+
+        click.echo(f'Your last task is ...\n CATEGORY: {category}\n  PROJECT: {project}\n     TASK: {task}\n   LABELS: {labels}\n')
+        delete = click.prompt('Delete last task?', type=str, default='no')
+        click.echo('delete?: {}'.format(delete))
+
+    def last_task(self):
+        click.echo("last task!")
 
 def read_tsv(filename):
     data = []
