@@ -39,8 +39,7 @@ class Core:
     @click.pass_context
     def start(ctx, task, category, project, labels):
         task = Task(task, category, project, labels)
-        task.add()
-
+        task.start()
         click.echo(f'Start task. You\'re great!\n')
         task.last()
 

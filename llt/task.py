@@ -19,10 +19,19 @@ class Task:
     start: datetime = datetime.now()
     end: datetime = None
 
-    def validate(self):
+    def start(self):
         pass
 
-    def add(self):
+    def stop(self):
+        pass
+
+    def restart(self):
+        pass
+
+    def delete(self):
+        pass
+
+    def status(self):
         pass
 
     def last(self):
@@ -34,6 +43,9 @@ class Task:
         if self.end:
             logging.info(f'       END: {self.end}')
             logging.info(f'  DURATION: {self.end} - {self.start}')
+
+    def validate(self):
+        pass
 
 
 class File:
