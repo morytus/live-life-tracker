@@ -42,12 +42,9 @@ class File:
         self.encoding = encoding
 
     def validate(self):
-        ## True
-        # 存在しない
-        # 最終レコードを除く全レコードのカラム数が7
-        # 最終レコードのカラム数が5，または7
-        ## False
-        # 上記のいずれでもない
+        # True
+        ## is Not exists
+        ## or columns count is 5 ro 7
         pass
 
     def read(self):
