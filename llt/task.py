@@ -6,50 +6,95 @@ from datetime import datetime
 import os
 import sys
 import time
+import copy
 import logging
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 @dataclass
 class Task:
-    category: str = None
-    project: str = None
-    task: str = None
-    labels: list = None
-    start: datetime = datetime.now()
-    end: datetime = None
+    def __init__(self, task_id:int = None, category:str = None,
+            project:str = None, task:str = None, labels:str = None,
+            start_time:str = None, end_time:str = None):
 
-    def start(self):
-        pass
+        self.task_id = task_id
+        self.category = category
+        self.project = project
+        self.task = task
+        self.labels = self._to_list(labels)
+        self.start_time = start_time
+        self.end_time = end_time
 
-    def stop(self):
-        pass
-
-    def restart(self):
-        pass
-
-    def delete(self):
-        pass
-
-    def status(self):
-        pass
-
-    def last(self):
+    def show(self):
+        logging.info(f'   TASK_ID: {self.task_id}')
         logging.info(f'  CATEGORY: {self.category}')
         logging.info(f'   PROJECT: {self.project}')
         logging.info(f'      TASK: {self.task}')
         logging.info(f'    LABELS: {self.labels}')
-        logging.info(f'     START: {self.start}')
-        if self.end:
-            logging.info(f'       END: {self.end}')
-            logging.info(f'  DURATION: {self.end} - {self.start}')
+        logging.info(f'     START: {self.start_time}')
+        if self.end_time:
+            logging.info(f'       END: {self.end_time}')
+            logging.info(f'  DURATION: {self.end_time} - {self.start_time}')
 
-    def validate(self):
+    @property
+    def is_finished(self) -> bool:
+        if self.start_time and self.end_time:
+            return True
+
+    def _to_list(self, labels:str) -> list:
+        return labels.split(',')
+
+
+class TaskApplication:
+    def __init__(self):
+        self.task_service = TaskService()
+        self.task_repo = TaskRepository()
+
+    def register(self, task:Task) -> Task:
+        now = datetime.now().replace(microsecond = 0)
+
+        entity = copy.deepcopy(task)
+        entity.task_id = int(now.timestamp())
+        entity.start_time = str(now)
+
+        self.task_repo.save(entity)
+        return entity
+
+    def terminate(self) -> Task:
+        last_task = task_service.last()
+        if last_task.is_finished:
+            logging.info("finished")
+        return task
+
+
+class TaskService:
+    def __init__(self):
+        self.task_repo = TaskRepository()
+
+    def last(self) -> Task:
+        task = self.task_repo.last()
+        return task
+
+
+class TaskRepository:
+    def __init__(self):
+        pass
+
+    def save(self, task:Task) -> None:
+        pass
+
+    def find(self, task:Task) -> Task:
+        pass
+
+    def last(self) -> Task:
+        pass
+
+    def modify(self, task:Task):
         pass
 
 
 class File:
-    def __init__(self, filepath, encoding):
+    def __init__(self, filepath:str, encoding:str):
         self.filepath = filepath
         self.encoding = encoding
 
@@ -68,7 +113,7 @@ class File:
                 data.append(row)
         return data
 
-    def write(self, record):
+    def write(self, record:str):
         with open(filename, "a", encoding=self.encoding) as f:
             f.write(record)
 

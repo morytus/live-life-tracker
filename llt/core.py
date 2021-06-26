@@ -6,15 +6,17 @@ import time
 import datetime
 import logging
 import click
+import json
 from llt import Task
+from llt import TaskApplication
 
 class Core:
     def load(self):
         @click.group()
         @click.option('--debug', is_flag=True)
         @click.pass_context
-        def _cli(ctx, debug):
-            if debug is True:
+        def _cli(ctx, debug:bool):
+            if debug == True:
                 logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s [%(levelname)s]: %(message)s')
 
@@ -28,25 +30,29 @@ class Core:
         _cli(obj={})
         logging.debug(f'mode ON')
 
-    def llt(self, debug):
+    def llt(self, debug:bool):
         pass
 
     @click.command()
     @click.argument('task')
-    @click.option('--category', '-c')
-    @click.option('--project', '-p', default='general', show_default=True)
-    @click.option('--labels', '-l')
+    @click.option('--category', '-C')
+    @click.option('--project', '-P', default='general', show_default=True)
+    @click.option('--labels', '-L')
     @click.pass_context
-    def start(ctx, task, category, project, labels):
-        task = Task(task, category, project, labels)
-        task.start()
+    def start(ctx, category, project, task, labels):
+        task = Task(None, category, project, task, labels)
+        app = TaskApplication()
+        registered = app.register(task)
         click.echo(f'Start task. You\'re great!\n')
-        task.last()
+        registered.show()
 
     @click.command()
     @click.pass_context
     def stop(ctx):
+        app = TaskApplication()
+        terminated = app.terminate()
         click.echo('Stop task.')
+        terminated.show()
 
     @click.command()
     @click.pass_context
@@ -63,7 +69,6 @@ class Core:
     def delete(ctx):
         click.echo(f'Your last task is ...')
         task = Task()
-        task.last()
 
         delete = click.confirm('Delete last task?')
         if delete:
@@ -74,7 +79,11 @@ class Core:
     def last(ctx):
         click.echo(f'Your last task is ...')
         task = Task()
-        task.last()
+
+def _dump(task:Task) -> str:
+    json_str = json.dumps(task.__dict__)
+    print(json_str)
+
 
 #CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 #

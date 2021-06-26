@@ -2,7 +2,7 @@
 
 from llt import Core
 
-def main():
+def main() -> None:
     core = Core()
     core.load()
 
