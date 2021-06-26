@@ -9,7 +9,7 @@ import click
 from llt import Task
 
 class Core:
-    def __init__(self):
+    def load(self):
         @click.group()
         @click.option('--debug', is_flag=True)
         @click.pass_context
@@ -26,6 +26,7 @@ class Core:
         _cli.add_command(self.last)
 
         _cli(obj={})
+        logging.debug(f'mode ON')
 
     def llt(self, debug):
         pass
@@ -37,13 +38,11 @@ class Core:
     @click.option('--labels', '-l')
     @click.pass_context
     def start(ctx, task, category, project, labels):
-        logging.debug(f'mode ON')
+        task = Task(task, category, project, labels)
+        task.add()
 
-        click.echo(f'Start task. You\'re great!')
-        click.echo(f'  CATEGORY: {category}')
-        click.echo(f'   PROJECT: {project}')
-        click.echo(f'      TASK: {task}')
-        click.echo(f'    LABELS: {labels}')
+        click.echo(f'Start task. You\'re great!\n')
+        task.last()
 
     @click.command()
     @click.pass_context

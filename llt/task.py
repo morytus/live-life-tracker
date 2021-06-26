@@ -17,10 +17,13 @@ class Task:
     task: str = None
     labels: list = None
     start: datetime = datetime.now()
-    end: datetime = datetime.now()
+    end: datetime = None
+
+    def validate(self):
+        pass
 
     def add(self):
-        logging.info("add called")
+        pass
 
     def last(self):
         logging.info(f'  CATEGORY: {self.category}')
@@ -28,8 +31,9 @@ class Task:
         logging.info(f'      TASK: {self.task}')
         logging.info(f'    LABELS: {self.labels}')
         logging.info(f'     START: {self.start}')
-        logging.info(f'       END: {self.end}')
-        logging.info(f'  DURATION: {self.end - self.start}')
+        if self.end:
+            logging.info(f'       END: {self.end}')
+            logging.info(f'  DURATION: {self.end} - {self.start}')
 
 
 class File:
