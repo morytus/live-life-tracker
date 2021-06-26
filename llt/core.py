@@ -45,13 +45,15 @@ class Core:
         registered = app.register(task)
         click.echo(f'Start task. You\'re great!\n')
         registered.show()
+        #if registered.in_progress:
+        #    print("YEEEEEEEEEEEES")
 
     @click.command()
     @click.pass_context
     def stop(ctx):
         app = TaskApplication()
         terminated = app.terminate()
-        click.echo('Stop task.')
+        #click.echo('Stop task.')
         terminated.show()
 
     @click.command()

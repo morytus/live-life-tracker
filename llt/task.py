@@ -41,59 +41,109 @@ class Task:
         if self.start_time and self.end_time:
             return True
 
+    @property
+    def in_progress(self) -> bool:
+        if self.start_time and not self.end_time:
+            return True
+
     def _to_list(self, labels:str) -> list:
         return labels.split(',')
+
+
+class DummyTask(Task):
+    def __init__(self):
+        self.task_id = "1234567890"
+        self.category = "Nice Category"
+        self.project = "Awesome Project"
+        self.task = "Good Task"
+        self.labels = self._to_list("111,222,333")
+        self.start_time = "2021-06-27 12:34:35"
+        self.end_time = None
 
 
 class TaskApplication:
     def __init__(self):
         self.task_service = TaskService()
         self.task_repo = TaskRepository()
+        self.now = datetime.now().replace(microsecond = 0)
 
     def register(self, task:Task) -> Task:
-        now = datetime.now().replace(microsecond = 0)
-
         entity = copy.deepcopy(task)
-        entity.task_id = int(now.timestamp())
-        entity.start_time = str(now)
+        entity.task_id = int(self.now.timestamp())
+        entity.start_time = str(self.now)
 
         self.task_repo.save(entity)
         return entity
 
     def terminate(self) -> Task:
-        last_task = task_service.last()
-        if last_task.is_finished:
-            logging.info("finished")
-        return task
+        last = self.task_repo.last()
+        if last.in_progress:
+            last.end_time = str(self.now)
+            last = self.task_repo.modify(last)
+            logging.info("Task NOW finished.")
+        else:
+            logging.info("Last task ALREADY finished.")
+
+        return last
 
 
 class TaskService:
     def __init__(self):
         self.task_repo = TaskRepository()
 
+    def is_finished(self) -> bool:
+        last = self.task_repo.last()
+        return last.is_finished
+
+    def in_progress(sef) -> bool:
+        last = self.task_repo.last()
+        return last.in_progress
+
     def last(self) -> Task:
-        task = self.task_repo.last()
-        return task
+        last = self.task_repo.last()
+        return last
+
+    def _has_body(self):
+        # True when not only header
+        pass
 
 
 class TaskRepository:
     def __init__(self):
-        pass
+        self.io = IOOperator()
 
     def save(self, task:Task) -> None:
-        pass
+        self.io.save(task)
 
     def find(self, task:Task) -> Task:
-        pass
+        return self.io.find(task)
 
     def last(self) -> Task:
-        pass
+        return self.io.last()
 
-    def modify(self, task:Task):
-        pass
+    def modify(self, task:Task) -> Task:
+        return self.io.modify(task)
 
 
-class File:
+class IOOperator:
+    def __init__(self):
+        # TODO: Parameters bind to config file
+        self.fo = FileOperator('~/work/output.json', 'utf-8')
+
+    def save(self, task:Task) -> None:
+        return DummyTask()
+
+    def find(self, task:Task) -> Task:
+        return DummyTask()
+
+    def last(self) -> Task:
+        return DummyTask()
+
+    def modify(self, task:Task) -> Task:
+        return DummyTask()
+
+
+class FileOperator:
     def __init__(self, filepath:str, encoding:str):
         self.filepath = filepath
         self.encoding = encoding
@@ -125,5 +175,4 @@ class File:
 
     def create_header():
         pass
-
 
