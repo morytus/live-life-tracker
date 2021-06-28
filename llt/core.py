@@ -9,10 +9,13 @@ import click
 import json
 
 from llt import Task
+from llt import TaskFactory
 from llt import TaskApplication
 
 class Core:
     def load(self):
+        logging.debug(f'mode ON')
+
         @click.group()
         @click.option('--debug', is_flag=True)
         @click.pass_context
@@ -23,65 +26,54 @@ class Core:
 
         _cli.add_command(self.start)
         _cli.add_command(self.stop)
-        _cli.add_command(self.restart)
-        _cli.add_command(self.status)
         _cli.add_command(self.delete)
-        _cli.add_command(self.last)
-
+        _cli.add_command(self.status)
         _cli(obj={})
-        logging.debug(f'mode ON')
 
     def llt(self, debug:bool):
         pass
 
     @click.command()
-    @click.argument('task')
+    @click.argument('summary', required=False)
     @click.option('--category', '-C')
     @click.option('--project', '-P', default='general', show_default=True)
     @click.option('--labels', '-L')
     @click.pass_context
-    def start(ctx, category, project, task, labels):
-        task = Task(None, category, project, task, labels)
+    def start(ctx, category, project, summary, labels):
+        # check out that other task is in progress
+
+        factory = TaskFactory()
         app = TaskApplication()
-        registered = app.register(task)
+
+        new_task = factory.generate(None, category, project, summary, labels)
+        registered = app.register(new_task)
         click.echo(f'Start task. You\'re great!\n')
         registered.show()
-        #if registered.in_progress:
-        #    print("YEEEEEEEEEEEES")
 
     @click.command()
     @click.pass_context
     def stop(ctx):
         app = TaskApplication()
         terminated = app.terminate()
-        #click.echo('Stop task.')
+        click.echo('Stop task.')
         terminated.show()
-
-    @click.command()
-    @click.pass_context
-    def restart(ctx):
-        click.echo('restart!')
-
-    @click.command()
-    @click.pass_context
-    def status(ctx):
-        click.echo('status!')
 
     @click.command()
     @click.pass_context
     def delete(ctx):
         click.echo(f'Your last task is ...')
-        task = Task()
 
         delete = click.confirm('Delete last task?')
         if delete:
-            task.delete()
+            app = TaskApplication()
+            app.remove()
+            click.echo("Delete executed.")
 
     @click.command()
     @click.pass_context
-    def last(ctx):
-        click.echo(f'Your last task is ...')
-        task = Task()
+    def status(ctx):
+        click.echo('status!')
+        # print last task if exists
 
 def _dump(task:Task) -> str:
     json_str = json.dumps(task.__dict__)

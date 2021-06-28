@@ -9,94 +9,86 @@ from datetime import date
 from datetime import datetime
 from dataclasses import dataclass
 from llt import IORepository
+from llt import Base
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 @dataclass
-class Task:
+class Task(Base):
     def __init__(self, task_id:int = None, category:str = None,
-            project:str = None, task:str = None, labels:str = None,
+            project:str = None, summary:str = None, labels:str = None,
             start_time:str = None, end_time:str = None):
 
-        self.task_id = task_id
-        self.category = category
-        self.project = project
-        self.task = task
-        self.labels = self._to_list(labels)
-        self.start_time = start_time
-        self.end_time = end_time
-
-    def show(self):
-        logging.info(f'   TASK_ID: {self.task_id}')
-        logging.info(f'  CATEGORY: {self.category}')
-        logging.info(f'   PROJECT: {self.project}')
-        logging.info(f'      TASK: {self.task}')
-        logging.info(f'    LABELS: {self.labels}')
-        logging.info(f'     START: {self.start_time}')
-        if self.end_time:
-            logging.info(f'       END: {self.end_time}')
-            logging.info(f'  DURATION: {self.end_time} - {self.start_time}')
-
-    @property
-    def is_finished(self) -> bool:
-        if self.start_time and self.end_time:
-            return True
-        return False
-
-    @property
-    def in_progress(self) -> bool:
-        if self.start_time and not self.end_time:
-            return True
-        return False
-
-    def _to_list(self, labels:str) -> list:
-        return labels.split(',')
+        super().__init__(task_id, category, project, summary, labels, start_time, end_time)
 
 
 class TaskApplication:
     def __init__(self):
-        self.task_service = TaskService()
+        self.task_factory = TaskFactory()
         self.task_repo = TaskRepository()
+        self.task_service = TaskService()
         self.now = datetime.now().replace(microsecond = 0)
 
-    def register(self, task:Task) -> Task:
-        entity = copy.deepcopy(task)
-        entity.task_id = int(self.now.timestamp())
-        entity.start_time = str(self.now)
+    def find(self) -> Task:
+        pass
 
-        self.task_repo.save(entity)
-        return entity
+    def register(self, task:Task) -> Task:
+        return self.task_repo.insert(task)
 
     def terminate(self) -> Task:
-        last = self.task_repo.last()
-        if last.in_progress:
-            last.end_time = str(self.now)
-            last = self.task_repo.modify(last)
-            logging.info("Task NOW finished.")
+        last_task = self.task_service.last()
+        if last_task.in_progress:
+            last_task.end_time = str(self.now)
+            last_task = self.task_repo.update(last_task)
+            logging.info("Task finished NOW.\n")
         else:
-            logging.info("Last task ALREADY finished.")
+            logging.info("Last task ALREADY finished.\n")
+        return last_task
 
-        return last
+    def remove(self) -> None:
+        last_task = self.task_service.last()
+        self.task_repo.delete(last_task)
 
+
+class TaskFactory:
+    def generate(self, task_id, category, project, summary, labels):
+
+        now = datetime.now().replace(microsecond = 0)
+        task_id = int(now.timestamp())
+        start_time = str(now)
+
+        if summary is None:
+            logging.info("New task will generate from last!")
+            return Task(task_id, category, project, summary, labels)
+
+        return Task(task_id, category, project, summary, labels)
 
 class TaskService:
     def __init__(self):
         self.task_repo = TaskRepository()
+        self.now = datetime.now().replace(microsecond = 0)
+
+    def generate(self, task) -> Task:
+        pass
 
     def is_finished(self) -> bool:
-        last = self.task_repo.last()
-        return last.is_finished
+        last_task = self.last()
+        return last_task.is_finished
 
     def in_progress(sef) -> bool:
-        last = self.task_repo.last()
-        return last.in_progress
+        last_task = self._last()
+        return last_task.in_progress
 
     def last(self) -> Task:
-        last = self.task_repo.last()
-        return last
+        #+# select last_task
+        return self.task_repo.select(None)
+
+    def is_first(self):
+        # try to register first task
+        pass
 
     def _has_body(self):
-        # True when not only header
+        # True when not only file header
         pass
 
 
@@ -104,16 +96,15 @@ class TaskRepository:
     def __init__(self):
         self.io = IORepository()
 
-    def save(self, task:Task) -> None:
-        self.io.save(task)
+    def insert(self, task:Task) -> Task:
+        return self.io.insert(task)
 
-    def find(self, task:Task) -> Task:
-        return self.io.find(task)
+    def select(self, task:Task) -> Task:
+        return self.io.select(task)
 
-    def last(self) -> Task:
-        return self.io.last()
+    def update(self, task:Task) -> Task:
+        return self.io.update(task)
 
-    def modify(self, task:Task) -> Task:
-        return self.io.modify(task)
-
+    def delete(self, task:Task) -> None:
+        self.io.delete(task)
 

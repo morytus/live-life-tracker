@@ -1,22 +1,23 @@
 import os
 import sys
+from llt import Base
 
 class IORepository:
     def __init__(self):
         # TODO: Parameters bind to config file
-        self.fo = FileRepository('~/work/output.json', 'utf-8')
+        self.repo = FileRepository('~/work/output.json', 'utf-8')
 
-    def save(self, task) -> None:
+    def insert(self, task):
         return DummyTask()
 
-    def find(self, task):
+    def select(self, task):
         return DummyTask()
 
-    def last(self):
+    def update(self, task):
         return DummyTask()
 
-    def modify(self, task):
-        return DummyTask()
+    def delete(self, task):
+        pass
 
 
 class FileRepository:
@@ -39,7 +40,7 @@ class FileRepository:
                 data.append(row)
         return data
 
-    def write(self, record:str):
+    def write(self, record):
         with open(filename, "a", encoding=self.encoding) as f:
             f.write(record)
 
@@ -53,28 +54,13 @@ class FileRepository:
         pass
 
 
-class DummyTask():
+class DummyTask(Base):
     def __init__(self):
         self.task_id = "1234567890"
         self.category = "Nice Category"
         self.project = "Awesome Project"
-        self.task = "Good Task"
+        self.summary = "Good Task"
         self.labels = self._to_list("111,222,333")
         self.start_time = "2021-06-27 12:34:35"
         self.end_time = None
-
-    @property
-    def is_finished(self) -> bool:
-        if self.start_time and self.end_time:
-            return True
-        return False
-
-    @property
-    def in_progress(self) -> bool:
-        if self.start_time and not self.end_time:
-            return True
-        return False
-
-    def _to_list(self, labels:str) -> list:
-        return labels.split(',')
 

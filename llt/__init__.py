@@ -5,6 +5,7 @@ from .io import DummyTask
 from .io import FileRepository
 from .io import IORepository
 from .task import Task
+from .task import TaskFactory
 from .task import TaskService
 from .task import TaskApplication
 from .task import TaskRepository
