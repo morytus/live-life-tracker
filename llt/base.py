@@ -6,7 +6,7 @@ logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 class Base:
     def __init__(self, task_id:int = None, category:str = None,
-            project:str = None, summary:str = None, labels:str = None,
+            project:str = None, summary:str = None, labels = None,
             start_time:str = None, end_time:str = None):
 
         self.task_id = task_id
@@ -29,18 +29,26 @@ class Base:
             return True
         return False
 
-    def show(self):
+    def show(self, add_lf=False):
         logging.info(f'   TASK_ID: {self.task_id}')
         logging.info(f'  CATEGORY: {self.category}')
         logging.info(f'   PROJECT: {self.project}')
         logging.info(f'   SUMMARY: {self.summary}')
         logging.info(f'    LABELS: {self.labels}')
         logging.info(f'     START: {self.start_time}')
+
         if self.end_time:
             logging.info(f'       END: {self.end_time}')
             logging.info(f'  DURATION: {self.end_time} - {self.start_time}')
 
-    def _to_list(self, labels:str) -> list:
+        if add_lf:
+            logging.info('')
+
+    def _to_list(self, labels) -> list:
+        t = type(labels)
+        if t is not list:
+            return labels
+
         if labels:
             return labels.split(',')
         return None

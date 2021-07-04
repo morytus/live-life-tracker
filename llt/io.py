@@ -2,6 +2,10 @@ import os
 import sys
 from llt import Base
 
+#+# -----------------------------------------------
+#+# TODO: Add file io for recording
+#+# -----------------------------------------------
+
 class IORepository:
     def __init__(self):
         self.filepath = '~/work/output.json'
@@ -16,7 +20,7 @@ class IORepository:
     def delete(self, task):
         pass
 
-    def latest(self):
+    def last(self):
         return DummyTask()
 
     def validate(self):

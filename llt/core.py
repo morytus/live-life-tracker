@@ -10,7 +10,7 @@ import json
 
 from llt import Task
 from llt import TaskFactory
-from llt import TaskService
+from llt import TaskApplication
 
 class Core:
     def load(self):
@@ -27,7 +27,7 @@ class Core:
         _cli.add_command(self.register)
         _cli.add_command(self.terminate)
         _cli.add_command(self.remove)
-        _cli.add_command(self.status)
+        _cli.add_command(self.last)
         _cli(obj={})
 
     def llt(self, debug:bool):
@@ -41,38 +41,43 @@ class Core:
     @click.pass_context
     def register(ctx, category, project, summary, labels):
         factory = TaskFactory()
-        service = TaskService()
+        app = TaskApplication()
 
         new_task = factory.generate(None, category, project, summary, labels)
-        registered = service.register(new_task)
+        registered = app.register(new_task)
 
-        click.echo(f'Start task. You\'re great!\n')
+        click.echo(f'Start new task. You\'re great!')
         registered.show()
 
     @click.command('stop')
     @click.pass_context
     def terminate(ctx):
-        service = TaskService()
-        terminated = service.terminate()
+        app = TaskApplication()
+        terminated = app.terminate()
         click.echo('Stop task.')
         terminated.show()
 
     @click.command('delete')
     @click.pass_context
     def remove(ctx):
+        app = TaskApplication()
         click.echo(f'Your last task is ...')
+        last = app.last()
+        last.show(add_lf=True)
 
         yes = click.confirm('Delete last task?')
         if yes:
-            service = TaskService()
-            service.remove()
+            app.remove()
             click.echo("Delete executed.")
 
-    @click.command('status')
+    @click.command('last')
     @click.pass_context
-    def status(ctx):
-        click.echo('status!')
-        # print last task if exists
+    def last(ctx):
+        app = TaskApplication()
+        task = app.last()
+        if task:
+            click.echo("\nLatest task is ...")
+            task.show()
 
 def _dump(task:Task) -> str:
     json_str = json.dumps(task.__dict__)
