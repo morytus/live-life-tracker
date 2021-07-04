@@ -22,54 +22,28 @@ class Task(Base):
         super().__init__(task_id, category, project, summary, labels, start_time, end_time)
 
 
-class TaskApplication:
-    def __init__(self):
-        self.task_factory = TaskFactory()
-        self.task_repo = TaskRepository()
-        self.task_service = TaskService()
-        self.now = datetime.now().replace(microsecond = 0)
-
-    def find(self) -> Task:
-        pass
-
-    def register(self, task:Task) -> Task:
-        return self.task_repo.insert(task)
-
-    def terminate(self) -> Task:
-        last_task = self.task_service.last()
-        if last_task.in_progress:
-            last_task.end_time = str(self.now)
-            last_task = self.task_repo.update(last_task)
-            logging.info("Task finished NOW.\n")
-        else:
-            logging.info("Last task ALREADY finished.\n")
-        return last_task
-
-    def remove(self) -> None:
-        last_task = self.task_service.last()
-        self.task_repo.delete(last_task)
-
-
 class TaskFactory:
     def generate(self, task_id, category, project, summary, labels):
-
         now = datetime.now().replace(microsecond = 0)
         task_id = int(now.timestamp())
         start_time = str(now)
 
         if summary is None:
             logging.info("New task will generate from last!")
-            return Task(task_id, category, project, summary, labels)
 
-        return Task(task_id, category, project, summary, labels)
+            # ----------------------------
+            # TODO: retrieve latest task
+            # ----------------------------
 
-class TaskService:
+            return Task(task_id, category, project, summary, labels, start_time)
+
+        return Task(task_id, category, project, summary, labels, start_time)
+
+
+class TaskTweek:
     def __init__(self):
-        self.task_repo = TaskRepository()
+        self.repo = TaskRepository()
         self.now = datetime.now().replace(microsecond = 0)
-
-    def generate(self, task) -> Task:
-        pass
 
     def is_finished(self) -> bool:
         last_task = self.last()
@@ -81,15 +55,54 @@ class TaskService:
 
     def last(self) -> Task:
         #+# select last_task
-        return self.task_repo.select(None)
+        return self.status(None)
 
-    def is_first(self):
+    def _is_first(self):
         # try to register first task
         pass
 
     def _has_body(self):
         # True when not only file header
         pass
+
+
+class TaskService:
+    def __init__(self):
+        self.tweek = TaskTweek()
+        self.repo = TaskRepository()
+        self.now = datetime.now().replace(microsecond = 0)
+
+    def register(self, task:Task) -> Task:
+        task = self.repo.latest()
+
+        if task.in_progress:
+            task.end_time = str(self.now)
+            task = self.repo.update(task)
+
+        result = self.repo.insert(task)
+        logging.info(f'Start task. You\'re great!\n')
+
+        return result
+
+    def terminate(self) -> Task:
+        task = self.repo.latest()
+
+        if task.in_progress is False:
+            logging.info("Last task ALREADY finished.\n")
+            return task
+
+        task.end_time = str(self.now)
+        result = self.repo.update(task)
+        logging.info("Task finished NOW.\n")
+
+        return result
+
+    def remove(self) -> None:
+        task = self.repo.latest()
+        self.repo.delete(task)
+
+    def status(self) -> Task:
+        return self.repo.latest(task)
 
 
 class TaskRepository:
@@ -99,12 +112,12 @@ class TaskRepository:
     def insert(self, task:Task) -> Task:
         return self.io.insert(task)
 
-    def select(self, task:Task) -> Task:
-        return self.io.select(task)
-
     def update(self, task:Task) -> Task:
         return self.io.update(task)
 
     def delete(self, task:Task) -> None:
         self.io.delete(task)
+
+    def latest(self) -> Task:
+        return self.io.latest()
 

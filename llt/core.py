@@ -10,7 +10,7 @@ import json
 
 from llt import Task
 from llt import TaskFactory
-from llt import TaskApplication
+from llt import TaskService
 
 class Core:
     def load(self):
@@ -24,52 +24,51 @@ class Core:
                 logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s [%(levelname)s]: %(message)s')
 
-        _cli.add_command(self.start)
-        _cli.add_command(self.stop)
-        _cli.add_command(self.delete)
+        _cli.add_command(self.register)
+        _cli.add_command(self.terminate)
+        _cli.add_command(self.remove)
         _cli.add_command(self.status)
         _cli(obj={})
 
     def llt(self, debug:bool):
         pass
 
-    @click.command()
+    @click.command('start')
     @click.argument('summary', required=False)
     @click.option('--category', '-C')
     @click.option('--project', '-P', default='general', show_default=True)
     @click.option('--labels', '-L')
     @click.pass_context
-    def start(ctx, category, project, summary, labels):
-        # check out that other task is in progress
-
+    def register(ctx, category, project, summary, labels):
         factory = TaskFactory()
-        app = TaskApplication()
+        service = TaskService()
 
         new_task = factory.generate(None, category, project, summary, labels)
-        registered = app.register(new_task)
+        registered = service.register(new_task)
+
         click.echo(f'Start task. You\'re great!\n')
         registered.show()
 
-    @click.command()
+    @click.command('stop')
     @click.pass_context
-    def stop(ctx):
-        app = TaskApplication()
-        terminated = app.terminate()
+    def terminate(ctx):
+        service = TaskService()
+        terminated = service.terminate()
         click.echo('Stop task.')
         terminated.show()
 
-    @click.command()
+    @click.command('delete')
     @click.pass_context
-    def delete(ctx):
+    def remove(ctx):
         click.echo(f'Your last task is ...')
 
-        delete = click.confirm('Delete last task?')
-        if delete:
-            app = TaskApplication()
-            app.remove()
+        yes = click.confirm('Delete last task?')
+        if yes:
+            service = TaskService()
+            service.remove()
             click.echo("Delete executed.")
 
-    @click.command()
+    @click.command('status')
     @click.pass_context
     def status(ctx):
         click.echo('status!')

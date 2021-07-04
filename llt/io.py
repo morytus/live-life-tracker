@@ -4,14 +4,11 @@ from llt import Base
 
 class IORepository:
     def __init__(self):
-        # TODO: Parameters bind to config file
-        self.repo = FileRepository('~/work/output.json', 'utf-8')
+        self.filepath = '~/work/output.json'
+        self.encoding = 'utf-8'
 
     def insert(self, task):
-        return DummyTask()
-
-    def select(self, task):
-        return DummyTask()
+        return task
 
     def update(self, task):
         return DummyTask()
@@ -19,11 +16,8 @@ class IORepository:
     def delete(self, task):
         pass
 
-
-class FileRepository:
-    def __init__(self, filepath:str, encoding:str):
-        self.filepath = filepath
-        self.encoding = encoding
+    def latest(self):
+        return DummyTask()
 
     def validate(self):
         # True
@@ -34,14 +28,14 @@ class FileRepository:
     def read(self):
         data = []
         idx = 0
-        with open(filename, "r", encoding=self.encoding) as f:
+        with open(filepath, "r", encoding=self.encoding) as f:
             reader = csv.reader(f, delimiter='\t')
             for row in reader:
                 data.append(row)
         return data
 
     def write(self, record):
-        with open(filename, "a", encoding=self.encoding) as f:
+        with open(filepath, "a", encoding=self.encoding) as f:
             f.write(record)
 
     def count_cols():
@@ -61,6 +55,6 @@ class DummyTask(Base):
         self.project = "Awesome Project"
         self.summary = "Good Task"
         self.labels = self._to_list("111,222,333")
-        self.start_time = "2021-06-27 12:34:35"
+        self.start_time = "2021-06-27 12:34:56"
         self.end_time = None
 
