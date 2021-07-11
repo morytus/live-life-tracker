@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 setup (
-    name='live-live-tracker',
+    name='live-life-tracker',
     version='0.0.1',
     packages=find_packages(),
 
@@ -20,15 +20,22 @@ setup (
     classifiers=[
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python 3',
-        'Programming Language :: Python 3.6',
         'Programming Language :: Python 3.7',
         'Programming Language :: Python 3.8',
+        'Programming Language :: Python 3.9',
         'Operationg System :: OS Independent',
     ],
 
     install_requires=[
-        'Click~=7.0',
+        'Click~=8.0',
+        'toml'
     ],
 
     package_data={'llt': ['data/*']},
+
+    entry_points={
+        'console_scripts': [
+            'llt=main:main'
+        ]
+    }
 )

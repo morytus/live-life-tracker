@@ -3,6 +3,7 @@
 import os
 import sys
 import time
+import toml
 import datetime
 import logging
 import click
@@ -13,7 +14,14 @@ from llt import TaskFactory
 from llt import TaskApplication
 
 class Core:
-    def load(self):
+    def __init__(self):
+        pass
+
+    @property
+    def _output_dir_exists(self) -> bool:
+        return True
+
+    def cli(self):
         logging.debug(f'mode ON')
 
         @click.group()
@@ -75,18 +83,14 @@ class Core:
     def last(ctx):
         app = TaskApplication()
         task = app.last()
-        if task:
-            click.echo("\nLatest task is ...")
-            task.show()
+        if not task:
+            click.echo("\nLatest task does not exist.")
+            return None
+
+        click.echo("\nLatest task is ...")
+        task.show()
 
 def _dump(task:Task) -> str:
     json_str = json.dumps(task.__dict__)
     print(json_str)
-
-
-#CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-#
-#if __name__ == "__main__":
-#    data = read_tsv(CURRENT_DIR + '/../test/2021-06-15.tsv')
-#    print(data)
 

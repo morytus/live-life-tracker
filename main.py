@@ -2,9 +2,9 @@
 
 from llt import Core
 
-def main() -> None:
+def main():
     core = Core()
-    core.load()
+    core.cli()
 
 if __name__ == '__main__':
     main()

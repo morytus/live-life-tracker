@@ -4,17 +4,18 @@ import os
 import sys
 import time
 import copy
+import json
 import logging
 from datetime import date
 from datetime import datetime
 from dataclasses import dataclass
 from llt import IORepository
-from llt import Base
+from llt import BaseTask
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 @dataclass
-class Task(Base):
+class Task(BaseTask):
     def __init__(self, task_id:int = None, category:str = None,
             project:str = None, summary:str = None, labels = None,
             start_time:str = None, end_time:str = None):
@@ -34,8 +35,10 @@ class TaskFactory:
 
         return Task(task_id, category, project, summary, labels)
 
+
 class TaskService:
     pass
+
 
 class TaskApplication:
     def __init__(self):
@@ -45,7 +48,7 @@ class TaskApplication:
     def register(self, task:Task) -> Task:
         last = self.repo.last()
 
-        if last.in_progress:
+        if last and last.in_progress:
             updated = self.repo.update(last)
             logging.info(f'Close last task.')
             updated.show()
@@ -93,5 +96,9 @@ class TaskRepository:
         self.io.delete(task)
 
     def last(self) -> Task:
-        return self.io.last()
+        last = self.io.last()
+        if not last:
+            return None
+
+        return Task(**last)
 
