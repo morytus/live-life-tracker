@@ -68,15 +68,16 @@ class Core:
     @click.command('delete')
     @click.pass_context
     def remove(ctx):
-        app = TaskApplication()
-        click.echo(f'Your last task is ...')
-        last = app.last()
-        last.show(add_lf=True)
+        #app = TaskApplication()
+        #click.echo(f'Your last task is ...')
+        #last = app.last()
+        #last.show(add_lf=True)
 
-        yes = click.confirm('Delete last task?')
-        if yes:
-            app.remove()
-            click.echo("Delete executed.")
+        #yes = click.confirm('Delete last task?')
+        #if yes:
+        #    app.remove()
+        #    click.echo("Delete executed.")
+        pass
 
     @click.command('last')
     @click.pass_context
