@@ -16,16 +16,13 @@ class IORepository:
         self.encoding = config.encoding
         self.output_dir = config.output_dir
 
-    #+# TODO: Task ではなく個別パラメータにしたい
-    #+# Repo は task を渡さないほうがよいのでは
-
-    def insert(self, task) -> str:
+    def insert(self, task):
         path = Path(self.output_dir + '/' + task.start_ymd)
 
         if path.exists() is False:
             path.mkdir(parents=True, exist_ok=True)
 
-        file_name = task.file_key + '-' + task.summary + '.json.ongoing'
+        file_name = task.file_key + '-' + task.summary + '.json'
         output_file = PurePath(str(path), file_name)
         task_dict = task.to_dict()
 
@@ -34,18 +31,24 @@ class IORepository:
 
         return task
 
-    def update(self, task) -> str:
-        return DummyTask()
+    def update(self, task):
+        path = Path(self.output_dir + '/' + task.start_ymd)
+        file_name = task.file_key + '-' + task.summary + '.json'
+        output_file = PurePath(str(path), file_name)
+        task_dict = task.to_dict()
+
+        with open(output_file, "w", encoding=self.encoding) as f:
+            json.dump(task_dict, f, ensure_ascii=False)
 
     def delete(self, task):
         pass
 
-    def last(self) -> str:
-        daily_dirs = self._latest_path(self.output_dir)
-        if not daily_dirs:
+    def last(self):
+        last_dir = self._latest_path(self.output_dir)
+        if not last_dir:
             return None
 
-        last_file = self._latest_path(daily_dirs)
+        last_file = self._latest_path(last_dir)
         return self._to_dict(last_file)
 
 
@@ -55,7 +58,7 @@ class IORepository:
 
         return data
 
-    def _latest_path(self, target_dir) -> str:
+    def _latest_path(self, target_dir):
         path = Path(target_dir)
         if not path.exists():
             return None

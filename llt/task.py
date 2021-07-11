@@ -61,7 +61,7 @@ class TaskApplication:
     def terminate(self) -> Task:
         last = self.repo.last()
 
-        if last.in_progress is False:
+        if last.is_finished:
             logging.info("Last task ALREADY finished.\n")
             return last
 
@@ -90,15 +90,16 @@ class TaskRepository:
     def update(self, task:Task) -> Task:
         now = datetime.now().replace(microsecond = 0)
         task.end_time = str(now)
-        return self.io.update(task)
+        self.io.update(task)
+        return task
 
     def delete(self, task:Task) -> None:
         self.io.delete(task)
 
     def last(self) -> Task:
-        last = self.io.last()
-        if not last:
+        last_dict = self.io.last()
+        if not last_dict:
             return None
 
-        return Task(**last)
+        return Task(**last_dict)
 
