@@ -36,13 +36,8 @@ class TaskFactory:
         return Task(task_id, category, project, summary, labels)
 
 
-class TaskService:
-    pass
-
-
 class TaskApplication:
     def __init__(self):
-        self.service = TaskService()
         self.repo = TaskRepository()
 
     def register(self, task:Task) -> Task:
