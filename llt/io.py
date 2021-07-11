@@ -69,15 +69,6 @@ class IORepository:
 
         return paths[-1]
 
-    def _read(self):
-        data = []
-        idx = 0
-        #with open(filepath, "r", encoding=self.encoding) as f:
-        #    reader = csv.reader(f, delimiter='\t')
-        #    for row in reader:
-        #        data.append(row)
-        return data
-
 
 class DummyTask(BaseTask):
     def __init__(self):
