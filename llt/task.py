@@ -10,7 +10,8 @@ logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 @dataclass
 class Task(BaseTask):
-    def __init__(self, task_id:int = None, category:str = None,
+    def __init__(
+            self, task_id:int = None, category:str = None,
             project:str = None, summary:str = None, labels = None,
             start_time:str = None, end_time:str = None):
 
@@ -72,13 +73,12 @@ class TaskRepository:
         self.io = IORepository()
 
     def insert(self, task:Task) -> Task:
-        now = datetime.now().replace(microsecond = 0)
-        task.start_time = str(now)
-        return self.io.insert(task)
+        task.prepare_start()
+        self.io.insert(task)
+        return task
 
     def update(self, task:Task) -> Task:
-        now = datetime.now().replace(microsecond = 0)
-        task.end_time = str(now)
+        task.prepare_stop()
         self.io.update(task)
         return task
 

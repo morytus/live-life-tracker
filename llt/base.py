@@ -9,7 +9,8 @@ from datetime import datetime
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 class BaseTask:
-    def __init__(self, task_id:int = None, category:str = None,
+    def __init__(
+            self, task_id:int = None, category:str = None,
             project:str = None, summary:str = None, labels = None,
             start_time:str = None, end_time:str = None):
 
@@ -44,6 +45,14 @@ class BaseTask:
     @property
     def file_key(self) -> str:
         return f'{self.start_ymd}-{self.task_id}'
+
+    def prepare_start(self):
+        now = datetime.now().replace(microsecond = 0)
+        self.start_time = str(now)
+
+    def prepare_stop(self):
+        now = datetime.now().replace(microsecond = 0)
+        self.start_time = str(now)
 
     def show(self, add_lf=False) -> None:
         logging.info(f'   TASK_ID: {self.task_id}')

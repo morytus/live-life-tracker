@@ -3,6 +3,7 @@
 import os
 import json
 import pprint
+import logging
 from pathlib import Path
 from pathlib import PurePath
 from datetime import datetime
@@ -15,7 +16,7 @@ class IORepository:
         self.encoding = config.encoding
         self.output_dir = config.output_dir
 
-    def insert(self, task):
+    def insert(self, task) -> None:
         parent_path = PurePath(self.output_dir, task.start_ymd)
 
         if parent_path.exists() is False:
@@ -28,9 +29,7 @@ class IORepository:
         with open(output_file, "w", encoding=self.encoding) as f:
             json.dump(task_dict, f, ensure_ascii=False)
 
-        return task
-
-    def update(self, task):
+    def update(self, task) -> None:
         parent_path = PurePath(self.output_dir, task.start_ymd)
 
         file_name = task.file_key + '-' + task.summary + '.json'
@@ -40,26 +39,26 @@ class IORepository:
         with open(output_file, "w", encoding=self.encoding) as f:
             json.dump(task_dict, f, ensure_ascii=False)
 
-    def delete(self, task):
+    def delete(self, task) -> None:
         pass
 
-    def last(self):
-        last_dir = self._latest_path(self.output_dir)
-        if not last_dir:
+    def last(self) -> dict:
+        last_file = self._latest_path(self.output_dir)
+        logging.info(f"last_file: {last_file}")
+        if not last_file:
             return None
 
-        last_file = self._latest_path(last_dir)
         return self._to_dict(last_file)
 
 
-    def _to_dict(self, file_path):
+    def _to_dict(self, file_path) -> dict:
         with open(file_path, "r", encoding=self.encoding) as f:
             data = json.load(f)
 
         return data
 
-    def _latest_path(self, target_dir):
-        path = Path(target_dir)
+    def _latest_path(self, target_path) -> str:
+        path = Path(target_path)
         if not path.exists():
             return None
 
@@ -67,7 +66,11 @@ class IORepository:
         if not paths:
             return None
 
-        return paths[-1]
+        last_path = paths[-1]
+        if Path(last_path).is_file():
+            return last_path
+
+        return self._latest_path(last_path)
 
 
 class DummyTask(BaseTask):

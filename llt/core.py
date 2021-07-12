@@ -85,6 +85,7 @@ class Core:
         click.echo("\nLatest task is ...")
         task.show()
 
+
 def _dump(task:Task) -> str:
     json_str = json.dumps(task.__dict__)
     print(json_str)
