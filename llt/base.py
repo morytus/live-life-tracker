@@ -52,7 +52,7 @@ class BaseTask:
 
     def prepare_stop(self):
         now = datetime.now().replace(microsecond = 0)
-        self.start_time = str(now)
+        self.end_time = str(now)
 
     def show(self, add_lf=False) -> None:
         logging.info(f'   TASK_ID: {self.task_id}')

@@ -16,40 +16,36 @@ class IORepository:
         self.encoding = config.encoding
         self.output_dir = config.output_dir
 
-    def insert(self, task) -> None:
+    def prepare_store(self, task) -> None:
         parent_path = PurePath(self.output_dir, task.start_ymd)
-
         if parent_path.exists() is False:
             parent_path.mkdir(parents=True, exist_ok=True)
 
-        file_name = task.file_key + '-' + task.summary + '.json'
-        output_file = PurePath(parent_path, file_name)
-        task_dict = task.to_dict()
-
-        with open(output_file, "w", encoding=self.encoding) as f:
-            json.dump(task_dict, f, ensure_ascii=False)
+    def insert(self, task) -> None:
+        self._upsert(task)
 
     def update(self, task) -> None:
-        parent_path = PurePath(self.output_dir, task.start_ymd)
-
-        file_name = task.file_key + '-' + task.summary + '.json'
-        output_file = PurePath(parent_path, file_name)
-        task_dict = task.to_dict()
-
-        with open(output_file, "w", encoding=self.encoding) as f:
-            json.dump(task_dict, f, ensure_ascii=False)
+        self._upsert(task)
 
     def delete(self, task) -> None:
         pass
 
     def last(self) -> dict:
-        last_file = self._latest_path(self.output_dir)
-        logging.info(f"last_file: {last_file}")
+        last_file = self._last_file_from(self.output_dir)
         if not last_file:
             return None
 
         return self._to_dict(last_file)
 
+    def _upsert(self, task) -> None:
+        parent_path = PurePath(self.output_dir, task.start_ymd)
+
+        file_name = task.file_key + '-' + task.summary + '.json'
+        output_file = PurePath(parent_path, file_name)
+        task_dict = task.to_dict()
+
+        with open(output_file, "w", encoding=self.encoding) as f:
+            json.dump(task_dict, f, ensure_ascii=False)
 
     def _to_dict(self, file_path) -> dict:
         with open(file_path, "r", encoding=self.encoding) as f:
@@ -57,8 +53,8 @@ class IORepository:
 
         return data
 
-    def _latest_path(self, target_path) -> str:
-        path = Path(target_path)
+    def _last_file_from(self, search_path) -> str:
+        path = Path(search_path)
         if not path.exists():
             return None
 
@@ -66,11 +62,11 @@ class IORepository:
         if not paths:
             return None
 
-        last_path = paths[-1]
-        if Path(last_path).is_file():
-            return last_path
+        target_path = paths[-1]
+        if Path(target_path).is_file():
+            return target_path
 
-        return self._latest_path(last_path)
+        return self._last_file_from(target_path)
 
 
 class DummyTask(BaseTask):

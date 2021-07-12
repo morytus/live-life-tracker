@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from pprint import pprint
 import logging
 from datetime import datetime
 from dataclasses import dataclass
@@ -52,8 +53,8 @@ class TaskApplication:
         last = self.repo.last()
 
         if last.is_finished:
-            logging.info("Last task ALREADY finished.\n")
-            return last
+            logging.info("Last task ALREADY finished.")
+            return None
 
         result = self.repo.update(last)
         logging.info("Task finished NOW.\n")
@@ -74,6 +75,7 @@ class TaskRepository:
 
     def insert(self, task:Task) -> Task:
         task.prepare_start()
+        self.io.prepare_store(task)
         self.io.insert(task)
         return task
 

@@ -56,8 +56,9 @@ class Core:
     def terminate(ctx):
         app = TaskApplication()
         terminated = app.terminate()
-        click.echo('Stop task.')
-        terminated.show()
+        if terminated:
+            click.echo('Stop task.')
+            terminated.show()
 
     @click.command('delete')
     @click.pass_context
@@ -79,10 +80,10 @@ class Core:
         app = TaskApplication()
         task = app.last()
         if not task:
-            click.echo("\nLatest task does not exist.")
+            click.echo("Last task does not exist.")
             return None
 
-        click.echo("\nLatest task is ...")
+        click.echo("Last task is ...")
         task.show()
 
 
