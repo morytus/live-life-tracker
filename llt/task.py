@@ -45,20 +45,20 @@ class TaskApplication:
             updated.show()
             logging.info('')
 
-        result = self.repo.insert(task)
+        # FIXME
+        logging.info(task.labels)
+        logging.info(type(task.labels))
 
+        result = self.repo.insert(task)
         return result
 
     def terminate(self) -> Task:
         last = self.repo.last()
 
         if last.is_finished:
-            logging.info("Last task ALREADY finished.")
             return None
 
         result = self.repo.update(last)
-        logging.info("Task finished NOW.\n")
-
         return result
 
     def remove(self) -> None:

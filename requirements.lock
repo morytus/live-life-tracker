@@ -1,2 +1,5 @@
 click==8.0.1
+-e git+git@github.com:morytus/live-life-tracker.git@84b62d687825acf5841dac6ec1f87ad429c279e9#egg=live_life_tracker
+-e git+git@github.com:morytus/live-life-tracker.git@84b62d687825acf5841dac6ec1f87ad429c279e9#egg=live_live_tracker
+-e git+git@github.com:morytus/live-life-tracker.git@84b62d687825acf5841dac6ec1f87ad429c279e9#egg=llt
 toml==0.10.2

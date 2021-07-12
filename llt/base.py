@@ -43,7 +43,11 @@ class BaseTask:
         return yyyy + mm + dd
 
     @property
-    def file_key(self) -> str:
+    def uniq_key(self) -> str:
+        return self._file_key + '-' + self.summary
+
+    @property
+    def _file_key(self) -> str:
         return f'{self.start_ymd}-{self.task_id}'
 
     def prepare_start(self):
@@ -77,8 +81,7 @@ class BaseTask:
         return self.__dict__
 
     def _to_list(self, labels) -> list:
-        t = type(labels)
-        if t is not list:
+        if type(labels) is list:
             return labels
 
         if labels:

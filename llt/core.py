@@ -38,7 +38,7 @@ class Core:
     @click.command('start')
     @click.argument('summary', required=False)
     @click.option('--category', '-C')
-    @click.option('--project', '-P', default='general', show_default=True)
+    @click.option('--project', '-P', default='General', show_default=True)
     @click.option('--labels', '-L')
     @click.pass_context
     def register(ctx, category, project, summary, labels):
@@ -59,6 +59,8 @@ class Core:
         if terminated:
             click.echo('Stop task.')
             terminated.show()
+        else:
+            logging.info("Last task ALREADY finished.")
 
     @click.command('delete')
     @click.pass_context

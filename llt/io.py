@@ -18,7 +18,7 @@ class IORepository:
 
     def prepare_store(self, task) -> None:
         parent_path = PurePath(self.output_dir, task.start_ymd)
-        if parent_path.exists() is False:
+        if Path(parent_path).exists() is False:
             parent_path.mkdir(parents=True, exist_ok=True)
 
     def insert(self, task) -> None:
@@ -34,23 +34,20 @@ class IORepository:
         last_file = self._last_file_from(self.output_dir)
         if not last_file:
             return None
-
         return self._to_dict(last_file)
 
     def _upsert(self, task) -> None:
+        file_name = task.uniq_key + '.json'
         parent_path = PurePath(self.output_dir, task.start_ymd)
-
-        file_name = task.file_key + '-' + task.summary + '.json'
         output_file = PurePath(parent_path, file_name)
-        task_dict = task.to_dict()
 
+        task_dict = task.to_dict()
         with open(output_file, "w", encoding=self.encoding) as f:
             json.dump(task_dict, f, ensure_ascii=False)
 
     def _to_dict(self, file_path) -> dict:
         with open(file_path, "r", encoding=self.encoding) as f:
             data = json.load(f)
-
         return data
 
     def _last_file_from(self, search_path) -> str:
