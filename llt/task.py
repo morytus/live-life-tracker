@@ -45,10 +45,6 @@ class TaskApplication:
             updated.show()
             logging.info('')
 
-        # FIXME
-        logging.info(task.labels)
-        logging.info(type(task.labels))
-
         result = self.repo.insert(task)
         return result
 
