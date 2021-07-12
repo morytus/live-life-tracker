@@ -54,8 +54,12 @@ class BaseTask:
         logging.info(f'     START: {self.start_time}')
 
         if self.end_time:
+            start_time = datetime.strptime(self.start_time, '%Y-%m-%d %H:%M:%S')
+            end_time = datetime.strptime(self.end_time, '%Y-%m-%d %H:%M:%S')
+            duration = end_time - start_time
+
             logging.info(f'       END: {self.end_time}')
-            logging.info(f'  DURATION: {self.end_time} - {self.start_time}')
+            logging.info(f'  DURATION: {duration}')
 
         if add_lf:
             logging.info('')

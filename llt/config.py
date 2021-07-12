@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import os
-import sys
 import toml
 from pathlib import Path
+from pathlib import PurePath
 from dataclasses import dataclass
 
 @dataclass
@@ -15,15 +15,16 @@ class Config:
 
         if not output_dir:
             parent_dir = Path.home()
-            output_dir = str(parent_dir) + '/llt'
+            output_dir = PurePath(parent_dir, 'llt')
 
         path = Path(output_dir)
         self.output_dir = str(path.expanduser())
 
     def _load_config(self) -> dict:
-        config_file = os.path.dirname(os.path.abspath(__file__)) + '/config/llt.toml'
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        config_file = PurePath(current_dir, 'config', 'llt.toml')
 
-        if os.path.exists(config_file) is False:
+        if Path(config_file).exists() is False:
             raise Exception(f"Config file '{config_file}' does NOT exist.")
 
         return toml.load(config_file)

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import sys
 import json
 import pprint
 from pathlib import Path
@@ -17,13 +16,13 @@ class IORepository:
         self.output_dir = config.output_dir
 
     def insert(self, task):
-        path = Path(self.output_dir + '/' + task.start_ymd)
+        parent_path = PurePath(self.output_dir, task.start_ymd)
 
-        if path.exists() is False:
-            path.mkdir(parents=True, exist_ok=True)
+        if parent_path.exists() is False:
+            parent_path.mkdir(parents=True, exist_ok=True)
 
         file_name = task.file_key + '-' + task.summary + '.json'
-        output_file = PurePath(str(path), file_name)
+        output_file = PurePath(parent_path, file_name)
         task_dict = task.to_dict()
 
         with open(output_file, "w", encoding=self.encoding) as f:
@@ -32,9 +31,10 @@ class IORepository:
         return task
 
     def update(self, task):
-        path = Path(self.output_dir + '/' + task.start_ymd)
+        parent_path = PurePath(self.output_dir, task.start_ymd)
+
         file_name = task.file_key + '-' + task.summary + '.json'
-        output_file = PurePath(str(path), file_name)
+        output_file = PurePath(parent_path, file_name)
         task_dict = task.to_dict()
 
         with open(output_file, "w", encoding=self.encoding) as f:
