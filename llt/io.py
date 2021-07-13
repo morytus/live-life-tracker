@@ -5,7 +5,6 @@ import json
 import pprint
 import logging
 from pathlib import Path
-from pathlib import PurePath
 from datetime import datetime
 from llt import BaseTask
 from llt import Config
@@ -17,7 +16,7 @@ class IORepository:
         self.output_dir = config.output_dir
 
     def prepare_store(self, task) -> None:
-        parent_path = PurePath(self.output_dir, task.start_ymd)
+        parent_path = Path(self.output_dir, task.start_ymd)
         if Path(parent_path).exists() is False:
             parent_path.mkdir(parents=True, exist_ok=True)
 
@@ -38,8 +37,7 @@ class IORepository:
 
     def _upsert(self, task) -> None:
         file_name = task.uniq_key + '.json'
-        parent_path = PurePath(self.output_dir, task.start_ymd)
-        output_file = PurePath(parent_path, file_name)
+        output_file = Path(self.output_dir, task.start_ymd, file_name)
 
         task_dict = task.to_dict()
         with open(output_file, "w", encoding=self.encoding) as f:
