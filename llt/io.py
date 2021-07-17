@@ -9,6 +9,8 @@ from datetime import datetime
 from llt import BaseTask
 from llt import Config
 
+logging.basicConfig(level=logging.INFO, format='%(message)s')
+
 class IORepository:
     def __init__(self):
         config = Config()

@@ -7,6 +7,8 @@ from llt import Task
 from llt import TaskFactory
 from llt import TaskApplication
 
+logging.basicConfig(level=logging.INFO, format='%(message)s')
+
 class Core:
     def __init__(self):
         pass
