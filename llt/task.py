@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from pprint import pprint
 import logging
 from datetime import datetime
 from dataclasses import dataclass
@@ -14,7 +13,7 @@ class Task(BaseTask):
     def __init__(
             self, task_id:int = None, category:str = None,
             project:str = None, summary:str = None, labels = None,
-            start_time:str = None, end_time:str = None):
+            start_time:str = None, end_time:str = None, duration:str = None):
 
         super().__init__(task_id, category, project, summary, labels, start_time, end_time)
 
@@ -35,6 +34,9 @@ class TaskFactory:
 class TaskApplication:
     def __init__(self):
         self.repo = TaskRepository()
+
+    def json(self) -> None:
+        self.repo.json()
 
     def register(self, task:Task) -> Task:
         last = self.repo.last()
@@ -68,6 +70,9 @@ class TaskApplication:
 class TaskRepository:
     def __init__(self):
         self.io = IORepository()
+
+    def json(self) -> None:
+        self.io.json()
 
     def insert(self, task:Task) -> Task:
         task.prepare_start()

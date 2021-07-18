@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import logging
 import click
-import json
+import logging
 from llt import Task
 from llt import TaskFactory
 from llt import TaskApplication
@@ -28,6 +27,7 @@ class Core:
                 logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s [%(levelname)s]: %(message)s')
 
+        _cli.add_command(self.json)
         _cli.add_command(self.register)
         _cli.add_command(self.terminate)
         _cli.add_command(self.remove)
@@ -36,6 +36,12 @@ class Core:
 
     def llt(self, debug:bool):
         pass
+
+    @click.command('json')
+    @click.pass_context
+    def json(ctx):
+        app = TaskApplication()
+        app.json()
 
     @click.command('start')
     @click.argument('summary', required=False)

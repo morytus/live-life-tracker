@@ -1,4 +1,6 @@
 [main]
 encoding = 'utf-8'
 output_dir = ''
+publish_dir = '~/work'
+publish_basename = 'llt_published'
 

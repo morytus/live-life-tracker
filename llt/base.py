@@ -57,6 +57,12 @@ class BaseTask:
     def prepare_stop(self):
         now = datetime.now().replace(microsecond = 0)
         self.end_time = str(now)
+        self.duration = self._calc_duration()
+
+    def _calc_duration(self):
+        start_time = datetime.strptime(self.start_time, '%Y-%m-%d %H:%M:%S')
+        end_time = datetime.strptime(self.end_time, '%Y-%m-%d %H:%M:%S')
+        return str(end_time - start_time)
 
     def show(self, add_lf=False) -> None:
         logging.info(f'   TASK_ID: {self.task_id}')
@@ -67,12 +73,8 @@ class BaseTask:
         logging.info(f'     START: {self.start_time}')
 
         if self.end_time:
-            start_time = datetime.strptime(self.start_time, '%Y-%m-%d %H:%M:%S')
-            end_time = datetime.strptime(self.end_time, '%Y-%m-%d %H:%M:%S')
-            duration = end_time - start_time
-
             logging.info(f'       END: {self.end_time}')
-            logging.info(f'  DURATION: {duration}')
+            logging.info(f'  DURATION: {self.duration}')
 
         if add_lf:
             logging.info('')

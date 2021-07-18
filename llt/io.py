@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import os
+import glob
 import json
-import pprint
 import logging
+import fileinput
 from pathlib import Path
+from pprint import pprint
 from datetime import datetime
 from llt import BaseTask
 from llt import Config
@@ -21,6 +23,27 @@ class IORepository:
         parent_path = Path(self.output_dir, task.start_ymd)
         if Path(parent_path).exists() is False:
             parent_path.mkdir(parents=True, exist_ok=True)
+
+    def json(self,) -> None:
+        config = Config()
+        path = Path(config.output_dir).expanduser()
+
+        files = glob.glob(str(path) + "/**/*")
+        publish_path = Path(str(config.publish_path) + '.json')
+        #pprint(files)
+
+        if files:
+            with open(publish_path, 'w', encoding=config.encoding) as fp:
+                with fileinput.input(files) as ff:
+                    fp.write('{"task_list": [\n')
+                    for line in ff:
+                        if ff.lineno() == 1:
+                            fp.write(f'{line}\n')
+                            continue
+
+                        fp.write(f', {line}\n')
+                    fp.write(']}')
+
 
     def insert(self, task) -> None:
         self._upsert(task)

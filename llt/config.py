@@ -11,13 +11,21 @@ class Config:
         config = self._load_config()
         self.encoding = config['main']['encoding']
         output_dir = config['main']['output_dir']
+        publish_dir = config['main']['publish_dir']
+        publish_basename = config['main']['publish_basename']
 
-        if not output_dir:
+        self.output_dir = self._expanduser(output_dir)
+        self.publish_dir = self._expanduser(publish_dir)
+
+        self.publish_path = Path(self.publish_dir, publish_basename)
+
+    def _expanduser(self, target_dir):
+        if not target_dir:
             parent_dir = Path.home()
-            output_dir = Path(parent_dir, 'llt')
+            target_dir = Path(parent_dir, 'llt')
 
-        path = Path(output_dir)
-        self.output_dir = str(path.expanduser())
+        path = Path(target_dir)
+        return str(path.expanduser())
 
     def _load_config(self) -> dict:
         current_dir = os.path.dirname(os.path.abspath(__file__))
