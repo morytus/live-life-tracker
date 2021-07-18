@@ -35,14 +35,14 @@ class IORepository:
         if files:
             with open(publish_path, 'w', encoding=config.encoding) as fp:
                 with fileinput.input(files) as ff:
-                    fp.write('{"task_list": [\n')
+                    fp.write('[\n')
                     for line in ff:
                         if ff.lineno() == 1:
                             fp.write(f'{line}\n')
                             continue
 
                         fp.write(f', {line}\n')
-                    fp.write(']}')
+                    fp.write(']')
 
 
     def insert(self, task) -> None:
