@@ -6,6 +6,3 @@ def main():
     core = Core()
     core.cli()
 
-if __name__ == '__main__':
-    main()
-
