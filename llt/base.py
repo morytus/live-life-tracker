@@ -44,11 +44,7 @@ class BaseTask:
 
     @property
     def uniq_key(self) -> str:
-        return self._file_key + '-' + self.summary
-
-    @property
-    def _file_key(self) -> str:
-        return f'{self.start_ymd}-{self.task_id}'
+        return f'{self.task_id}-{self.summary}'
 
     def prepare_start(self):
         now = datetime.now().replace(microsecond = 0)
