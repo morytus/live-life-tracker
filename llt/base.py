@@ -12,7 +12,7 @@ class BaseTask:
     def __init__(
             self, task_id:int = None, category:str = None,
             project:str = None, summary:str = None, labels = None,
-            start_time:str = None, end_time:str = None):
+            start_time:str = None, end_time:str = None, duration:str = None):
 
         self.task_id = task_id
         self.category = category
@@ -21,6 +21,7 @@ class BaseTask:
         self.labels = self._to_list(labels)
         self.start_time = start_time
         self.end_time = end_time
+        self.duration = duration
 
     @property
     def is_finished(self) -> bool:

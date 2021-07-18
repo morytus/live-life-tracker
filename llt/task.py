@@ -15,7 +15,7 @@ class Task(BaseTask):
             project:str = None, summary:str = None, labels = None,
             start_time:str = None, end_time:str = None, duration:str = None):
 
-        super().__init__(task_id, category, project, summary, labels, start_time, end_time)
+        super().__init__(task_id, category, project, summary, labels, start_time, end_time, duration)
 
 
 class TaskFactory:
