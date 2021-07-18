@@ -31,7 +31,7 @@ setup (
         'toml'
     ],
 
-    package_data={'llt': ['data/*']},
+    package_data={'llt': ['data/*', 'config/*']},
 
     entry_points={
         'console_scripts': [
