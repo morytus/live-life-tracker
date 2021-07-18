@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 setup (
     name='live-life-tracker',
     version='0.0.1',
-    packages=find_packages('llt'),
+    packages=find_packages('.'),
 
     author='morytus',
     author_email='sundayjuice@gmail.com',
