@@ -38,7 +38,7 @@ class TaskApplication:
     def json(self) -> None:
         self.repo.json()
 
-    def start(self, task:Task) -> Task:
+    def register(self, task:Task) -> Task:
         result = self.repo.insert(task)
         return result
 
