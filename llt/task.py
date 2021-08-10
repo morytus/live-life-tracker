@@ -38,7 +38,7 @@ class TaskApplication:
     def json(self) -> None:
         self.repo.json()
 
-    def register(self, task:Task) -> Task:
+    def start(self, task:Task) -> Task:
         last = self.repo.last()
 
         if last and last.in_progress:
@@ -50,7 +50,7 @@ class TaskApplication:
         result = self.repo.insert(task)
         return result
 
-    def terminate(self) -> Task:
+    def stop(self) -> Task:
         last = self.repo.last()
 
         if last.is_finished:
@@ -58,10 +58,6 @@ class TaskApplication:
 
         result = self.repo.update(last)
         return result
-
-    def remove(self) -> None:
-        task = self.repo.last()
-        self.repo.delete(task)
 
     def last(self) -> Task:
         return self.repo.last()

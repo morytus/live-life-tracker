@@ -28,9 +28,8 @@ class Core:
                         format='%(asctime)s [%(levelname)s]: %(message)s')
 
         _cli.add_command(self.json)
-        _cli.add_command(self.register)
-        _cli.add_command(self.terminate)
-        _cli.add_command(self.remove)
+        _cli.add_command(self.start)
+        _cli.add_command(self.stop)
         _cli.add_command(self.last)
         _cli(obj={})
 
@@ -49,40 +48,26 @@ class Core:
     @click.option('--project', '-P', default='General', show_default=True)
     @click.option('--labels', '-L')
     @click.pass_context
-    def register(ctx, category, project, summary, labels):
+    def start(ctx, category, project, summary, labels):
         factory = TaskFactory()
         app = TaskApplication()
 
         new_task = factory.generate(None, category, project, summary, labels)
-        registered = app.register(new_task)
+        started = app.start(new_task)
 
         click.echo(f'Start new task. You\'re great!')
-        registered.show()
+        started.show()
 
     @click.command('stop')
     @click.pass_context
-    def terminate(ctx):
+    def stop(ctx):
         app = TaskApplication()
-        terminated = app.terminate()
-        if terminated:
+        stopped = app.stop()
+        if stopped:
             click.echo('Stop task.')
-            terminated.show()
+            stopped.show()
         else:
             logging.info("Last task ALREADY finished.")
-
-    @click.command('delete')
-    @click.pass_context
-    def remove(ctx):
-        #app = TaskApplication()
-        #click.echo(f'Your last task is ...')
-        #last = app.last()
-        #last.show(add_lf=True)
-
-        #yes = click.confirm('Delete last task?')
-        #if yes:
-        #    app.remove()
-        #    click.echo("Delete executed.")
-        pass
 
     @click.command('last')
     @click.pass_context
