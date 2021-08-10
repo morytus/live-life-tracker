@@ -42,6 +42,15 @@ class Core:
         app = TaskApplication()
         app.json()
 
+    @click.command('reg')
+    @click.argument('summary', required=False)
+    @click.option('--category', '-C')
+    @click.option('--project', '-P', default='General', show_default=True)
+    @click.option('--labels', '-L')
+    @click.pass_context
+    def register(ctx):
+        pass
+
     @click.command('start')
     @click.argument('summary', required=False)
     @click.option('--category', '-C')

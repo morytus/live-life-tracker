@@ -39,6 +39,10 @@ class TaskApplication:
         self.repo.json()
 
     def start(self, task:Task) -> Task:
+        result = self.repo.insert(task)
+        return result
+
+    def start(self, task:Task) -> Task:
         last = self.repo.last()
 
         if last and last.in_progress:
@@ -80,9 +84,6 @@ class TaskRepository:
         task.prepare_stop()
         self.io.update(task)
         return task
-
-    def delete(self, task:Task) -> None:
-        self.io.delete(task)
 
     def last(self) -> Task:
         last_dict = self.io.last()
