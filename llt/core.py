@@ -28,6 +28,7 @@ class Core:
                         format='%(asctime)s [%(levelname)s]: %(message)s')
 
         _cli.add_command(self.json)
+        _cli.add_command(self.register)
         _cli.add_command(self.start)
         _cli.add_command(self.stop)
         _cli.add_command(self.last)
@@ -43,13 +44,22 @@ class Core:
         app.json()
 
     @click.command('reg')
-    @click.argument('summary', required=False)
+    @click.argument('summary', required=True)
+    @click.argument('start_time', required=True)
+    @click.argument('end_time', required=True)
     @click.option('--category', '-C')
     @click.option('--project', '-P', default='General', show_default=True)
     @click.option('--labels', '-L')
     @click.pass_context
-    def register(ctx):
-        pass
+    def register(ctx, category, project, labels, summary, start_time, end_time):
+        factory = TaskFactory()
+        app = TaskApplication()
+
+        new_task = factory.generate(None, category, project, labels, summary, start_time, end_time)
+        registered = app.register(new_task)
+
+        click.echo(f'Registered new task. You\'ve done it!')
+        registered.show()
 
     @click.command('start')
     @click.argument('summary', required=False)
@@ -57,14 +67,14 @@ class Core:
     @click.option('--project', '-P', default='General', show_default=True)
     @click.option('--labels', '-L')
     @click.pass_context
-    def start(ctx, category, project, summary, labels):
+    def start(ctx, category, project, labels, summary):
         factory = TaskFactory()
         app = TaskApplication()
 
-        new_task = factory.generate(None, category, project, summary, labels)
+        new_task = factory.generate(None, category, project, labels, summary)
         started = app.start(new_task)
 
-        click.echo(f'Start new task. You\'re great!')
+        click.echo(f'Started new task. You\'re great!')
         started.show()
 
     @click.command('stop')
@@ -73,7 +83,7 @@ class Core:
         app = TaskApplication()
         stopped = app.stop()
         if stopped:
-            click.echo('Stop task.')
+            click.echo('Stopped task.')
             stopped.show()
         else:
             logging.info("Last task ALREADY finished.")

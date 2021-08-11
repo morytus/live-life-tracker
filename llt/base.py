@@ -11,14 +11,14 @@ logging.basicConfig(level=logging.INFO, format='%(message)s')
 class BaseTask:
     def __init__(
             self, task_id:int = None, category:str = None,
-            project:str = None, summary:str = None, labels = None,
+            project:str = None, labels = None, summary:str = None,
             start_time:str = None, end_time:str = None, duration:str = None):
 
         self.task_id = task_id
         self.category = category
         self.project = project
-        self.summary = summary
         self.labels = self._to_list(labels)
+        self.summary = summary
         self.start_time = start_time
         self.end_time = end_time
         self.duration = duration
@@ -48,12 +48,14 @@ class BaseTask:
         return f'{self.task_id}-{self.summary}'
 
     def prepare_start(self):
-        now = datetime.now().replace(microsecond = 0)
-        self.start_time = str(now)
+        if self.start_time is None:
+            now = datetime.now().replace(microsecond = 0)
+            self.start_time = str(now)
 
     def prepare_stop(self):
-        now = datetime.now().replace(microsecond = 0)
-        self.end_time = str(now)
+        if self.end_time is None:
+            now = datetime.now().replace(microsecond = 0)
+            self.end_time = str(now)
         self.duration = self._calc_duration()
 
     def _calc_duration(self):
