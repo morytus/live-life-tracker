@@ -51,16 +51,17 @@ class Core:
     @click.option('--category', '-C')
     @click.option('--project', '-P', default='General', show_default=True)
     @click.option('--labels', '-L')
+    @click.option('--today',  '-T', 'is_today', is_flag=True, default=False)
     @click.pass_context
-    def register(ctx, category, project, labels, summary, start_time, end_time):
-        validator = DateValidator()
+    def register(ctx, category, project, labels, summary, is_today, start_time, end_time):
+        validator = DateValidator(is_today)
         if not validator.both_date(start_time, end_time):
             raise Exception('Incorrect date. Check out format or start/end')
 
         factory = TaskFactory()
         app = TaskApplication()
 
-        new_task = factory.create(None, category, project, labels, summary, start_time, end_time)
+        new_task = factory.create(category, project, labels, summary, is_today, start_time, end_time)
         registered = app.register(new_task)
 
         click.echo(f'Registered new task. You\'ve done it!')
@@ -76,7 +77,7 @@ class Core:
         factory = TaskFactory()
         app = TaskApplication()
 
-        new_task = factory.create(None, category, project, labels, summary)
+        new_task = factory.create(category, project, labels, summary)
         started = app.start(new_task)
 
         click.echo(f'Started new task. You\'re great!')

@@ -5,6 +5,7 @@ from datetime import datetime
 from dataclasses import dataclass
 from llt import IORepository
 from llt import BaseTask
+from llt.date import build_today
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 
@@ -20,8 +21,12 @@ class Task(BaseTask):
 
 class TaskFactory:
     def create(
-            self, task_id, category, project, labels,
-            summary, start_time=None, end_time=None):
+            self, category, project, labels, summary, is_today=False,
+            start_time=None, end_time=None):
+
+        if is_today:
+            start_time = build_today(start_time)
+            end_time = build_today(end_time)
 
         task_id = self._generate_id_from(start_time)
 
