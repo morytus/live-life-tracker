@@ -5,6 +5,7 @@ import logging
 from llt import Task
 from llt import TaskFactory
 from llt import TaskApplication
+from llt import DateValidator
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 
@@ -52,6 +53,10 @@ class Core:
     @click.option('--labels', '-L')
     @click.pass_context
     def register(ctx, category, project, labels, summary, start_time, end_time):
+        validator = DateValidator()
+        if not validator.both_date(start_time, end_time):
+            raise Exception('Incorrect date. Check out format or start/end')
+
         factory = TaskFactory()
         app = TaskApplication()
 

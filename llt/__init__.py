@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from .config import Config
+from .date import DateValidator
 from .base import BaseTask
 from .io import IORepository
 from .io import DummyTask
