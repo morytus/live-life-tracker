@@ -55,7 +55,7 @@ class Core:
         factory = TaskFactory()
         app = TaskApplication()
 
-        new_task = factory.generate(None, category, project, labels, summary, start_time, end_time)
+        new_task = factory.create(None, category, project, labels, summary, start_time, end_time)
         registered = app.register(new_task)
 
         click.echo(f'Registered new task. You\'ve done it!')
@@ -71,7 +71,7 @@ class Core:
         factory = TaskFactory()
         app = TaskApplication()
 
-        new_task = factory.generate(None, category, project, labels, summary)
+        new_task = factory.create(None, category, project, labels, summary)
         started = app.start(new_task)
 
         click.echo(f'Started new task. You\'re great!')

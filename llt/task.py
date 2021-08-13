@@ -19,12 +19,11 @@ class Task(BaseTask):
 
 
 class TaskFactory:
-    def generate(
+    def create(
             self, task_id, category, project, labels,
             summary, start_time=None, end_time=None):
 
-        now = datetime.now().replace(microsecond = 0)
-        task_id = int(now.timestamp())
+        task_id = self._generate_id_from(start_time)
 
         if summary is None:
             app = TaskApplication()
@@ -32,6 +31,13 @@ class TaskFactory:
             return Task(task_id, last.category, last.project, last.labels, last.summary)
 
         return Task(task_id, category, project, labels, summary, start_time, end_time)
+
+    def _generate_id_from(self, start_time):
+        if start_time is None:
+            now = datetime.now().replace(microsecond = 0)
+            return int(now.timestamp())
+
+        return int(datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S').timestamp())
 
 
 class TaskApplication:
