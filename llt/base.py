@@ -58,10 +58,19 @@ class BaseTask:
             self.end_time = str(now)
         self.duration = self._calc_duration()
 
+    def _to_timestamp(self, target):
+        return datetime.strptime(target, '%Y-%m-%d %H:%M:%S')
+
+    def format_start_time(self):
+        return self._to_timestamp(self.start_time)
+
+    def format_end_time(self):
+        return self._to_timestamp(self.end_time)
+
     def _calc_duration(self):
-        start_time = datetime.strptime(self.start_time, '%Y-%m-%d %H:%M:%S')
-        end_time = datetime.strptime(self.end_time, '%Y-%m-%d %H:%M:%S')
-        return str(end_time - start_time)
+        start = self.format_start_time()
+        end = self.format_end_time()
+        return str(end - start)
 
     def show(self, add_lf=False) -> None:
         logging.info(f'   TASK_ID: {self.task_id}')

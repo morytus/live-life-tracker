@@ -34,14 +34,12 @@ class TaskFactory:
             app = TaskApplication()
             last = app.last()
             return Task(task_id, last.category, last.project, last.labels, last.summary)
-
         return Task(task_id, category, project, labels, summary, start_time, end_time)
 
     def _generate_id_from(self, start_time):
         if start_time is None:
             now = datetime.now().replace(microsecond = 0)
             return int(now.timestamp())
-
         return int(datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S').timestamp())
 
 
@@ -52,34 +50,53 @@ class TaskApplication:
     def json(self) -> None:
         self.repo.json()
 
-    def register(self, task:Task) -> Task:
-        task.prepare_start()
-        task.prepare_stop()
-        result = self.repo.insert(task)
-        return result
+    def register(self, reg_task:Task) -> Task:
+        last_task = self.repo.last()
+        if self._is_progress(last_task) and self._is_sequential(last_task, reg_task):
+            self._terminate(last_task)
+
+        reg_task.prepare_stop()
+        return self._generate(reg_task)
 
     def start(self, task:Task) -> Task:
-        last = self.repo.last()
-
-        if last and last.in_progress:
-            last.prepare_stop()
-            updated = self.repo.update(last)
-            logging.info(f'Closed last task.')
-            updated.show()
-            logging.info('')
+        last_task = self.repo.last()
+        if self._is_progress(last_task):
+            self._terminate(last_task)
 
         task.prepare_start()
+        return self._generate(task)
+
+    def stop(self) -> Task:
+        last_task = self.repo.last()
+        if last_task.is_finished:
+            return None
+        return self._terminate(last_task)
+
+    def _to_timestamp(self, target_date) -> datetime:
+        return datetime.strptime(target_date.start_time, '%Y-%m-%d %H:%M:%d')
+
+    def _is_sequential(self, pre, post) -> bool:
+        pre_time = pre.format_start_time()
+        post_time = post.format_start_time()
+        if pre_time < post_time:
+            return True
+        return False
+
+    def _is_progress(self, task) -> bool:
+        if task and task.in_progress:
+            return True
+        return False
+
+    def _generate(self, task) -> Task:
         result = self.repo.insert(task)
         return result
 
-    def stop(self) -> Task:
-        last = self.repo.last()
-
-        if last.is_finished:
-            return None
-
-        last.prepare_stop()
-        result = self.repo.update(last)
+    def _terminate(self, task) -> Task:
+        task.prepare_stop()
+        result = self.repo.update(task)
+        logging.info(f'Closed last task.')
+        result.show()
+        logging.info('')
         return result
 
     def last(self) -> Task:
@@ -106,6 +123,5 @@ class TaskRepository:
         last_dict = self.io.last()
         if not last_dict:
             return None
-
         return Task(**last_dict)
 
