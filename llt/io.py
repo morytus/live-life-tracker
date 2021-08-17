@@ -51,9 +51,6 @@ class IORepository:
     def update(self, task) -> None:
         self._upsert(task)
 
-    def delete(self, task) -> None:
-        pass
-
     def last(self) -> dict:
         last_file = self._last_file_from(self.output_dir)
         if not last_file:
