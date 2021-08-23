@@ -52,7 +52,7 @@ class TaskApplication:
 
     def register(self, reg_task:Task) -> Task:
         last_task = self.repo.last()
-        if self._is_progress(last_task) and self._is_sequential(last_task, reg_task):
+        if last_task.in_progress and self._is_sequential(last_task, reg_task):
             self._terminate(last_task)
 
         reg_task.prepare_stop()
@@ -60,7 +60,7 @@ class TaskApplication:
 
     def start(self, task:Task) -> Task:
         last_task = self.repo.last()
-        if self._is_progress(last_task):
+        if last_task.in_progress:
             self._terminate(last_task)
 
         task.prepare_start()
@@ -82,14 +82,8 @@ class TaskApplication:
             return True
         return False
 
-    def _is_progress(self, task) -> bool:
-        if task and task.in_progress:
-            return True
-        return False
-
     def _generate(self, task) -> Task:
-        result = self.repo.insert(task)
-        return result
+        return self.repo.insert(task)
 
     def _terminate(self, task) -> Task:
         task.prepare_stop()

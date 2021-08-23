@@ -88,10 +88,7 @@ class Core:
     def stop(ctx):
         app = TaskApplication()
         stopped = app.stop()
-        if stopped:
-            click.echo('Stopped task.')
-            stopped.show()
-        else:
+        if not stopped:
             logging.info("Last task ALREADY finished.")
 
     @click.command('last')
