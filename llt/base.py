@@ -70,7 +70,8 @@ class BaseTask:
     def _calc_duration(self):
         start = self.format_start_time()
         end = self.format_end_time()
-        return str(end - start)
+        diff = end - start
+        return int(diff.total_seconds())
 
     def show(self, add_lf=False) -> None:
         logging.info(f'   TASK_ID: {self.task_id}')
